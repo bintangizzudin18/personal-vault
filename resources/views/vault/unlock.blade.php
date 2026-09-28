@@ -644,6 +644,7 @@
             }
         }
     </style>
+    @vite(['resources/js/app.js'])
 </head>
 
 <body>

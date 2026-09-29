@@ -50,6 +50,6 @@ RUN mkdir -p \
 RUN chmod -R 775 storage bootstrap/cache
 
 # FrankenPHP listens on Vercel's assigned port
-ENV SERVER_NAME=:${PORT}
+ENV SERVER_NAME=:80
 
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

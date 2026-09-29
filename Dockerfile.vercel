@@ -35,7 +35,7 @@ RUN composer install \
     --no-interaction \
     --prefer-dist
 
-# Clear Laravel configuration cache
+# Clear Laravel configuration
 RUN php artisan config:clear
 
 # Create Laravel writable directories
@@ -48,8 +48,5 @@ RUN mkdir -p \
 
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
-
-# FrankenPHP listens on Vercel's assigned port
-ENV SERVER_NAME=:80
 
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

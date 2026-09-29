@@ -2,6 +2,7 @@ FROM dunglas/frankenphp:php8.3-bookworm
 
 WORKDIR /app
 
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -20,41 +21,35 @@ RUN apt-get update && apt-get install -y \
     exif \
     gd \
     && rm -rf /var/lib/apt/lists/*
-    git \
-    unzip \
-    libzip-dev \
-    libicu-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    && docker-php-ext-install \
-    pdo_mysql \
-    mbstring \
-    bcmath \
-    intl \
-    zip \
-    exif \
-    gd \
-    && rm -rf /var/lib/apt/lists/*
 
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copy Laravel application
 COPY . .
 
+# Install PHP dependencies
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
 
+# Clear Laravel configuration cache
 RUN php artisan config:clear
 
-RUN mkdir -p storage/framework/cache \
+# Create Laravel writable directories
+RUN mkdir -p \
+    storage/framework/cache \
     storage/framework/sessions \
     storage/framework/views \
     storage/logs \
     bootstrap/cache
 
+# Set permissions
 RUN chmod -R 775 storage bootstrap/cache
 
+# FrankenPHP listens on Vercel's assigned port
 ENV SERVER_NAME=:${PORT}
 
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

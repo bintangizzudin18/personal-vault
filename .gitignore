@@ -15,6 +15,14 @@
 /storage/framework/sessions/*
 /storage/framework/views/*
 
+# Personal Digital Vault
+*.pdv
+*.vault
+
+# Security secrets
+/storage/vault/
+/storage/backups/
+
 /vendor
 
 .env

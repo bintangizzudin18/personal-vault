@@ -49,4 +49,4 @@ RUN mkdir -p \
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+CMD ["frankenphp", "run", "--config", "/app/Caddyfile"]

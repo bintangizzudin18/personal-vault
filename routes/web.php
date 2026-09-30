@@ -64,6 +64,4 @@ Route::delete(
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/vault/unlock');

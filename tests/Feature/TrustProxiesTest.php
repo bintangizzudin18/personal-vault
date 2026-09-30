@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class TrustProxiesTest extends TestCase
@@ -18,5 +19,15 @@ class TrustProxiesTest extends TestCase
             'action="https://localhost/vault/unlock"',
             false
         );
+    }
+
+    public function test_unlock_page_issues_cookie_backed_session(): void
+    {
+        Config::set('session.driver', 'cookie');
+
+        $response = $this->get('/vault/unlock');
+
+        $response->assertOk();
+        $response->assertCookie(config('session.cookie'));
     }
 }

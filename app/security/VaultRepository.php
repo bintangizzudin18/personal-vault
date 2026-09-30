@@ -23,14 +23,16 @@ class VaultRepository
      */
     public function getVault(): array
     {
-        if (!file_exists($this->path)) {
+        $contents = app(VaultStorage::class)->read($this->path);
+
+        if ($contents === null) {
             throw new RuntimeException(
                 'File Vault tidak ditemukan.'
             );
         }
 
         return VaultFile::read(
-            file_get_contents($this->path),
+            $contents,
             $this->vaultKey
         );
     }
@@ -45,17 +47,7 @@ class VaultRepository
             $this->vaultKey
         );
 
-        if (
-            file_put_contents(
-                $this->path,
-                $vaultFile,
-                LOCK_EX
-            ) === false
-        ) {
-            throw new RuntimeException(
-                'Gagal menyimpan Vault.'
-            );
-        }
+        app(VaultStorage::class)->write($this->path, $vaultFile);
     }
 
     /**

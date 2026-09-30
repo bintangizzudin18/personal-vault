@@ -7,6 +7,7 @@ use App\Security\VaultCategoryFields;
 use App\Security\VaultFile;
 use App\Security\VaultItem;
 use App\Security\VaultRepository;
+use App\Security\VaultStorage;
 use Illuminate\Http\Request;
 
 class VaultController extends Controller
@@ -62,7 +63,9 @@ class VaultController extends Controller
             'vault/personal-vault.pdv'
         );
 
-        if (!file_exists($vaultPath)) {
+        $vaultContents = app(VaultStorage::class)->read($vaultPath);
+
+        if ($vaultContents === null) {
             return back()->withErrors([
                 'root_secret' =>
                     'File Vault tidak ditemukan.',
@@ -75,7 +78,7 @@ class VaultController extends Controller
             );
 
             VaultFile::read(
-                file_get_contents($vaultPath),
+                $vaultContents,
                 $vaultKey
             );
         } catch (\Throwable $e) {
@@ -112,8 +115,14 @@ class VaultController extends Controller
         );
 
         try {
+            $vaultContents = app(VaultStorage::class)->read($vaultPath);
+
+            if ($vaultContents === null) {
+                throw new \RuntimeException('File Vault tidak ditemukan.');
+            }
+
             $vaultData = VaultFile::read(
-                file_get_contents($vaultPath),
+                $vaultContents,
                 $vaultKey
             );
         } catch (\Throwable $e) {

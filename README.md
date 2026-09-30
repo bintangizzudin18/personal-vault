@@ -21,6 +21,28 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Vercel Vault Storage
+
+The vault file is encrypted and intentionally excluded from Git. To use the
+same vault on Vercel, store it in a private Vercel Blob store:
+
+1. In the Vercel project, open **Storage**, create a **Private Blob** store, and
+	connect it to the project for the Production environment. Vercel supplies
+	`BLOB_READ_WRITE_TOKEN` to the deployment.
+2. Add `VAULT_STORAGE_DRIVER` with value `vercel_blob` to the Production
+	environment variables. `VAULT_BLOB_PATH` can remain `personal-vault.pdv`.
+3. From the linked project directory, upload the existing encrypted local vault:
+
+	```powershell
+	vercel blob put storage/vault/personal-vault.pdv --pathname personal-vault.pdv --access private
+	```
+
+4. Redeploy Production. The application reads and writes the vault through the
+	private Blob store; local development continues to use the local file by
+	default.
+
+Do not make this Blob public, commit the `.pdv` file, or expose the Blob token.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
